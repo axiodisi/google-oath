@@ -3,56 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login with Google</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background: #fff;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        #authorize-button {
-            display: block;
-            margin: 20px auto;
-            padding: 10px 20px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        #content {
-            display: none;
-        }
-        #content h1 {
-            color: green;
-        }
-    </style>
+    <title>Google OAuth Example</title>
+    <script src="https://apis.google.com/js/api.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>Login with Google</h1>
-        <button id="authorize-button">Authorize</button>
-        <div id="content">
-            <h1>Welcome!</h1>
-            <p>You are now logged in with Google. You can access your Google Drive and Google Sheets data from here.</p>
-        </div>
-    </div>
-    <script src="https://apis.google.com/js/api.js"></script>
+    <h1>Google OAuth Example</h1>
+    <button id="authorize-button">Authorize</button>
+    <button id="signout-button" style="display: none;">Sign Out</button>
+    <div id="content"></div>
+
     <script>
+        const SCOPE = 'https://www.googleapis.com/auth/drive.file';
         let GoogleAuth;
-        const SCOPE = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets';
 
         function handleClientLoad() {
             gapi.load('client:auth2', initClient);
@@ -67,21 +29,28 @@
                 GoogleAuth.isSignedIn.listen(updateSigninStatus);
                 updateSigninStatus(GoogleAuth.isSignedIn.get());
                 document.getElementById('authorize-button').onclick = handleAuthClick;
+                document.getElementById('signout-button').onclick = handleSignoutClick;
             });
+        }
+
+        function handleAuthClick() {
+            GoogleAuth.signIn();
+        }
+
+        function handleSignoutClick() {
+            GoogleAuth.signOut();
         }
 
         function updateSigninStatus(isSignedIn) {
             if (isSignedIn) {
                 document.getElementById('authorize-button').style.display = 'none';
-                document.getElementById('content').style.display = 'block';
+                document.getElementById('signout-button').style.display = 'block';
+                document.getElementById('content').innerText = 'You are signed in!';
             } else {
                 document.getElementById('authorize-button').style.display = 'block';
-                document.getElementById('content').style.display = 'none';
+                document.getElementById('signout-button').style.display = 'none';
+                document.getElementById('content').innerText = 'You are not signed in.';
             }
-        }
-
-        function handleAuthClick(event) {
-            GoogleAuth.signIn();
         }
 
         handleClientLoad();
