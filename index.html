@@ -24,6 +24,8 @@
             gapi.client.init({
                 'clientId': '812194722245-3cinf55qaia7jlftpuoo9kco7dtetmbf.apps.googleusercontent.com',
                 'scope': SCOPE,
+                'ux_mode': 'popup',
+                'redirect_uri': 'YOUR_REDIRECT_URI'
             }).then(function () {
                 GoogleAuth = gapi.auth2.getAuthInstance();
                 GoogleAuth.isSignedIn.listen(updateSigninStatus);
