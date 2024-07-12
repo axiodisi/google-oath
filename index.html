@@ -9,13 +9,9 @@
 <body>
     <h1>Google OAuth Example</h1>
     <button id="authorize-button">Authorize</button>
-    <button id="signout-button" style="display: none;">Sign Out</button>
     <div id="content"></div>
 
     <script>
-        const SCOPE = 'https://www.googleapis.com/auth/drive.file';
-        let GoogleAuth;
-
         function handleClientLoad() {
             gapi.load('client:auth2', initClient);
         }
@@ -23,36 +19,17 @@
         function initClient() {
             gapi.client.init({
                 'clientId': '812194722245-3cinf55qaia7jlftpuoo9kco7dtetmbf.apps.googleusercontent.com',
-                'scope': SCOPE,
-                'ux_mode': 'popup',
-                'redirect_uri': 'YOUR_REDIRECT_URI'
-            }).then(function () {
-                GoogleAuth = gapi.auth2.getAuthInstance();
-                GoogleAuth.isSignedIn.listen(updateSigninStatus);
-                updateSigninStatus(GoogleAuth.isSignedIn.get());
-                document.getElementById('authorize-button').onclick = handleAuthClick;
-                document.getElementById('signout-button').onclick = handleSignoutClick;
+                'scope': 'YOUR_SCOPES',
+                'redirect_uri': 'https://fcs-oauth-callback.netlify.app'
+            }).then(() => {
+                const GoogleAuth = gapi.auth2.getAuthInstance();
+                document.getElementById('authorize-button').onclick = () => {
+                    GoogleAuth.signIn().then(() => {
+                        // Redirect to Notion page after successful sign-in
+                        window.location.href = 'https://fibonacci-coverage-system-vip.super.site/';
+                    });
+                };
             });
-        }
-
-        function handleAuthClick() {
-            GoogleAuth.signIn();
-        }
-
-        function handleSignoutClick() {
-            GoogleAuth.signOut();
-        }
-
-        function updateSigninStatus(isSignedIn) {
-            if (isSignedIn) {
-                document.getElementById('authorize-button').style.display = 'none';
-                document.getElementById('signout-button').style.display = 'block';
-                document.getElementById('content').innerText = 'You are signed in!';
-            } else {
-                document.getElementById('authorize-button').style.display = 'block';
-                document.getElementById('signout-button').style.display = 'none';
-                document.getElementById('content').innerText = 'You are not signed in.';
-            }
         }
 
         handleClientLoad();
